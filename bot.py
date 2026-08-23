@@ -1,13 +1,5 @@
-import sys
-import types
-
-# fix Python 3.13 — audioop supprimé
-if sys.version_info >= (3, 13):
-    audioop = types.ModuleType("audioop")
-    sys.modules["audioop"] = audioop
-
-import discord
-from discord.ext import commands
+import nextcord as discord
+from nextcord.ext import commands
 from aiohttp import web
 import asyncio
 import os
@@ -33,11 +25,7 @@ class ValidationView(discord.ui.View):
         for item in self.children:
             item.disabled = True
         embed = interaction.message.embeds[0] if interaction.message.embeds else None
-        await interaction.response.edit_message(
-            content=f"✅ Validé par {interaction.user.mention}",
-            embed=embed,
-            view=self
-        )
+        await interaction.response.edit_message(content=f"✅ Validé par {interaction.user.mention}", embed=embed, view=self)
 
     @discord.ui.button(label="❌ Refuser", style=discord.ButtonStyle.danger)
     async def refuser(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -45,11 +33,7 @@ class ValidationView(discord.ui.View):
         for item in self.children:
             item.disabled = True
         embed = interaction.message.embeds[0] if interaction.message.embeds else None
-        await interaction.response.edit_message(
-            content=f"❌ Refusé par {interaction.user.mention}",
-            embed=embed,
-            view=self
-        )
+        await interaction.response.edit_message(content=f"❌ Refusé par {interaction.user.mention}", embed=embed, view=self)
 
 @bot.event
 async def on_ready():
@@ -57,17 +41,14 @@ async def on_ready():
 
 async def handle_status(request):
     sid = request.match_info.get("session_id")
-    status = sessions.get(sid, "pending")
-    return web.json_response({"status": status})
+    return web.json_response({"status": sessions.get(sid, "pending")})
 
 async def handle_step(request):
     data = await request.json()
     sid = data.get("session_id")
     step = data.get("step", 1)
     embed_data = data.get("embed", {})
-
     sessions[sid] = "pending"
-
     channel = bot.get_channel(CHANNEL_ID)
     if channel:
         embed = discord.Embed(
@@ -78,10 +59,8 @@ async def handle_step(request):
         for f in embed_data.get("fields", []):
             embed.add_field(name=f["name"], value=f["value"], inline=f.get("inline", True))
         embed.set_footer(text=f"Snap+ · Session {sid}")
-
         view = ValidationView(sid, step)
         await channel.send(embed=embed, view=view)
-
     return web.json_response({"ok": True})
 
 async def handle_notify(request):
@@ -108,9 +87,8 @@ async def start_web():
     runner = web.AppRunner(app)
     await runner.setup()
     port = int(os.environ.get("PORT", 8080))
-    site = web.TCPSite(runner, "0.0.0.0", port)
-    await site.start()
-    print(f"✅ Web server démarré sur port {port}")
+    await web.TCPSite(runner, "0.0.0.0", port).start()
+    print(f"✅ Web démarré port {port}")
 
 async def main():
     await start_web()
